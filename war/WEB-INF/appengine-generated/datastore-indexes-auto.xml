@@ -1,0 +1,11 @@
+<!-- Indices written at Tue, 10 Dec 2013 22:38:07 CET -->
+
+<datastore-indexes>
+
+    <!-- Used 3 times in query history -->
+    <datastore-index kind="TemperatureReading" ancestor="false" source="auto">
+        <property name="key" direction="asc"/>
+        <property name="rawDate" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
