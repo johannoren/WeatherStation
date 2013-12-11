@@ -1,0 +1,23 @@
+###################################################
+# SETUP RASPBERRY PI FOR WEATHER STATION
+###################################################
+
+1. Burn Raspbian OS to SD card
+
+2. Enable SSHD as default. See http://macgyverdev.blogspot.se/2012/08/raspberry-pi-how-to-get-ssh-and-tomcat.html
+
+3. Create script directory: 
+       mkdir weatherstation
+       scp /WeatherStationServer/raspberrypi/src/weatherstation.py pi@piaddress:weatherstation/
+       
+4. So the juice is in the weatherstation.py python script. But to run it on start up we create a wrapper bash script
+   Create a file /home/pi/weatherstation/weatherstation.sh containing
+   
+   #!/bin/sh
+	sleep 10
+	sudo python /home/pi/weatherstation/weatherstation.py
+   
+5. Make sure this kicks in when the Raspberry boots by adding this to /etc/rc.local
+	/home/pi/weatherstation/weatherstation.sh &
+	
+6. Reboot the Raspberry Pi and check whether the server gets any temperature readings!
