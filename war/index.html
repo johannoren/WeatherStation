@@ -1,139 +1,339 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
-<!-- above set at the top of the file will set     -->
-<!-- the browser's rendering engine into           -->
-<!-- "Quirks Mode". Replacing this declaration     -->
-<!-- with a "Standards Mode" doctype is supported, -->
-<!-- but may lead to some differences in layout.   -->
+<!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>Holmön väderstation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
 	<script src="js/jquery-2.0.3.min.js"></script>
-	<!--script src="js/knockout-3.0.0.js"></script-->
-	<!--script src="js/angular.min.js"></script-->
 	<script src="js/globalize.min.js"></script>
 	<script src="js/dx.chartjs.js"></script>   
 	<script src="js/underscore.js"></script>   
 	
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
   	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  	<link rel="stylesheet" href="css/weatherstation.css">
+  	<!--  <link rel="stylesheet" href="css/weatherstation.css">  -->
+  	<link href="css/bootstrap.min.css" rel="stylesheet">
   	
   	  <script>
+  	  /* Google analytics junk */
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-46361998-1', 'stugmonitor.appspot.com');
+	  ga('send', 'pageview');
+
+
+  	  
+  	  
 	  $(function() {
 	    $( "#datepicker" ).datepicker({ dateFormat: "yymmdd" });
 	  });
 	  </script>
   </head>
 
-  <body>
-	
-	<div>
-		<span class="shoutout" id="currentTimeSpan">Laddar temperaturdata från server...</span> 
-	</div>
-	<div>
-		<span class="shoutout" id="coldestTemp"></span> 
-	</div>
-	
-	<div id="chartContainerToday" class="containers" style="height: 440px; width: 95%;"></div>
-	<div id="chartContainerWeek" class="containers" style="height: 440px; width: 95%;"></div>
-	<div id="chartContainerMonth" class="containers" style="height: 440px; width: 95%;"></div>
-
-	
-	<script>
-
-function toHHMM(rawTime) {
-	var d = new Date(rawTime);
-	var m = d.getMinutes();
-	if (m < 10) {
-		m = "0" + "" + m;
-	}
-	return d.getHours() + ":" + m;
-}
-
-function chartTemperature(settings) {
-				
-	$(settings.chartContainer).dxChart({
-	    dataSource: settings.dataSource,
-	    commonSeriesSettings: {
-	        type: "spline",
-	        argumentField: "time"
-	    },
-	    commonAxisSettings: {
-	        grid: {
-	            visible: true
-	        }
-	    },
-	    series: [
-	        { valueField: "temp", name: settings.curveExplanation }
-	    ],
-	    tooltip:{
-	        enabled: true
-	    },
-	    legend: {
-	        verticalAlignment: "bottom",
-	        horizontalAlignment: "center"
-	    },
-	    title: settings.title,
-	    commonPaneSettings: {
-	        border:{
-	            visible: true,
-	            bottom: false
-	        }
-	    }
-	});
-}
-
-$.get("/api/temperature/stugan", function(data,status) {
-	
-	function tempInfoConverter(info) { 
-		return { 
-			temp: info.temp, 
-			time: toHHMM(info.time)
-		}; 
-	}
-	
-	var currentTemp = data.temperatureInfo.currentTemp;
-	var currentTime = data.temperatureInfo.currentTime;
-	var todaysLowestTemperature = data.temperatureInfo.todaysTemperature.lowestTemperature;
-	var todaysHighestTemperature = data.temperatureInfo.todaysTemperature.highestTemperature;
-	var todaysTemperatureInfo = _.map(data.temperatureInfo.todaysTemperature.temperatureInfo, tempInfoConverter);
-	var weeksTemperatureInfo = _.map(data.temperatureInfo.weeksTemperature.temperatureInfo, tempInfoConverter);
-	var monthsTemperatureInfo = _.map(data.temperatureInfo.monthsTemperature.temperatureInfo, tempInfoConverter);
-	
-	$("#currentTimeSpan").html("Klockan <b>" + toHHMM(currentTime) + "</b> var temperaturen <b>" + currentTemp + " &deg;C</b>.");
-	$("#coldestTemp").html("Lägsta uppmätta temperatur senaste dygnet är <b>" + todaysLowestTemperature + " &deg;C</b>. Högsta temperatur är <b>" + todaysHighestTemperature + " &deg;C</b>.");
-	
-	chartTemperature({
-						chartContainer: "#chartContainerToday", 
-						dataSource: todaysTemperatureInfo,
-						curveExplanation: "Temp senaste dygnet (C)",
-						title: "Temperatur i stugan 2013-12-09"
-					});
-
-	chartTemperature({
-						chartContainer: "#chartContainerWeek", 
-						dataSource: weeksTemperatureInfo,
-						curveExplanation: "Temp senaste veckan (C)",
-						title: "Temperatur i stugan 2013-12-09"
-					});
-
-	chartTemperature({
-						chartContainer: "#chartContainerMonth", 
-						dataSource: monthsTemperatureInfo,
-						curveExplanation: "Temp senaste månaden (C)",
-						title: "Temperatur i stugan 2013-12-09"
-					});
-
-});
-
-
+	<body>
+  		<div class="container">
+  			<div class="page-header">
+  				<h1>Fjärrsensor <small>Temperaturmätning Holmön</small></h1>
+			</div>
+			<div id="dataNotLoadedArea">
+				<img src="images/loading.gif" alt="Loading data..." />
+			</div>
 			
+			<div id="dataLoadedArea" style="display:none">
+				<div class="alert alert-success" id="alertBoxOnline">Fjärrsensorn har varit <b>online</b> <span id="upTime"></span>.</div>
+				<div class="alert alert-danger" id="alertBoxOffline">Fjärrsensorn har varit <b>offline</b> <span id="downTime"></span></div>						
+	
+				<h2>Senaste dygnet</h2>
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Senaste mätningen:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingCurrentTemp"></span> &deg;C kl <span id="latestDayReadingCurrentTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingHighestTemp"></span> &deg;C kl <span id="latestDayReadingHighestTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Lägsta temperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingLowestTemp"></span> &deg;C kl <span id="latestDayReadingLowestTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Medeltemperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingAverageTemp"></span> &deg;C</b></div>
+				</div>  	
+				<br/>
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div id="chartContainerToday" class="containers" style="height: 300px; width: 100%;"></div>
+					</div>
+				</div>  	
+	
+				<h2>Senaste veckan</h2>
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingHighestTemp"></span> &deg;C kl <span id="latestWeekReadingHighestTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Lägsta temperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingLowestTemp"></span> &deg;C kl <span id="latestWeekReadingLowestTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Medeltemperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingAverageTemp"></span> &deg;C</b></div>
+				</div>  	
+	
+				<br/>
+		
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div id="chartContainerWeek" class="containers" style="height: 300px; width: 100%;"></div>
+					</div>
+				</div>  	
+			
+				<h2>Senaste m&aring;naden</h2>
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingHighestTemp"></span> &deg;C kl <span id="latestMonthReadingHighestTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Lägsta temperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingLowestTemp"></span> &deg;C kl <span id="latestMonthReadingLowestTime"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Medeltemperatur:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingAverageTemp"></span> &deg;C</b></div>
+				</div>  	
+	
+				<br/>
+		
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div id="chartContainerMonth" class="containers" style="height: 300px; width: 100%;"></div>
+					</div>
+				</div>  	
+			</div>
+		
+			<script>
 	
 	
-	</script>
+	var queryString = function () {
+	  // This function is anonymous, is executed immediately and 
+	  // the return value is assigned to QueryString!
+	  var query_string = {};
+	  var query = window.location.search.substring(1);
+	  var vars = query.split("&");
+	  for (var i=0;i<vars.length;i++) {
+	    var pair = vars[i].split("=");
+	    	// If first entry with this name
+	    if (typeof query_string[pair[0]] === "undefined") {
+	      query_string[pair[0]] = pair[1];
+	    	// If second entry with this name
+	    } else if (typeof query_string[pair[0]] === "string") {
+	      var arr = [ query_string[pair[0]], pair[1] ];
+	      query_string[pair[0]] = arr;
+	    	// If third or later entry with this name
+	    } else {
+	      query_string[pair[0]].push(pair[1]);
+	    }
+	  } 
+	    return query_string;
+	} ();
+	
+	function zeroPad(n) {
+		if (n < 10) {
+			n = "0" + "" + n;
+		}
+		return n;
+	}
+	
+	function toHHMM(rawTime) {
+		var d = new Date(rawTime);
+		var m = d.getMinutes();
+		var h = d.getHours();
+		return zeroPad(h) + ":" + zeroPad(m);
+	}
+	
+	function toYYMMDDHHMM(rawTime) {
+		var d = new Date(rawTime);
+		var m = zeroPad(d.getMinutes());
+		var day = zeroPad(d.getDate());
+		var h = zeroPad(d.getHours());
+		var mo = zeroPad(d.getMonth() + 1);
+		return d.getFullYear() + "" + mo + "" + day + "-" + h + ":" + m;
+	}
+	
+	
+	function chartTemperature(settings) {
+					
+		$(settings.chartContainer).dxChart({
+		    dataSource: settings.dataSource,
+		    commonSeriesSettings: {
+		        type: "spline",
+		        argumentField: "time"
+		    },
+		    commonAxisSettings: {
+		        grid: {
+		            visible: true
+		        }
+		    },
+		    series: [
+		        { valueField: "temp", name: settings.curveExplanation }
+		    ],
+		    tooltip:{
+		        enabled: true
+		    },
+		    legend: {
+		        verticalAlignment: "bottom",
+		        horizontalAlignment: "center"
+		    },
+		    title: settings.title,
+		    commonPaneSettings: {
+		        border:{
+		            visible: true,
+		            bottom: false
+		        }
+		    }
+		});
+	}
+	
+
+	function guid() {
+		function s4() {
+			return Math.floor((1 + Math.random()) * 0x10000)
+	             .toString(16)
+	             .substring(1);
+		}
+
+		return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+	         s4() + '-' + s4() + s4() + s4();
+	}
+	
+	
+	function millisToHumanTime(millis) {
+		var secs = Math.floor(millis / 1000) % 60;
+		var mins = Math.floor(millis / 60000) % 60;
+		var hours = Math.floor(millis / 3600000) % 24;
+		var days = Math.floor(millis / 86400000);
+
+		var str = "";
+		
+		if (days > 0) {
+			if (days === 1) {
+				str = "1 dag ";
+			} else {
+				str = days + " dagar ";
+			}
+		}
+		str = str + zeroPad(hours) + ":" + zeroPad(mins) + ":" + zeroPad(secs);
+		return str;
+	}
+	
+	
+	/* Which application key are we using? */
+	var key = queryString.key;
+	if (key === undefined) {
+		key = "stugan";
+	}
+	
+	/* Setup init state before AJAX */ 
+	$("#alertBoxOnline").hide();
+	$("#alertBoxOffline").hide();
+	
+	
+	$.get("/api/temperature/" + key, function(data,status) {
+		
+		function tempInfoConverterHHMM(info) { 
+			return { 
+				temp: info.temp, 
+				time: toHHMM(info.time)
+			}; 
+		}
+		
+		function tempInfoConverterYYMMDDHHMM(info) { 
+			return { 
+				temp: info.temp, 
+				time: toYYMMDDHHMM(info.time)
+			}; 
+		}
+		
+		var sensorActive = data.temperatureInfo.remoteSensorActive;
+		var currentTemp = data.temperatureInfo.currentTemp;
+
+		var todaysLowestTemperature = data.temperatureInfo.todaysTemperature.lowestTemperature;
+		var todaysHighestTemperature = data.temperatureInfo.todaysTemperature.highestTemperature;
+		var todaysTemperatureInfo = _.map(data.temperatureInfo.todaysTemperature.temperatureInfo, tempInfoConverterHHMM);
+		var weeksTemperatureInfo = _.map(data.temperatureInfo.weeksTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+		var monthsTemperatureInfo = _.map(data.temperatureInfo.monthsTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+		
+		/* Switch from loading mode to display mode */
+		$("#dataNotLoadedArea" ).hide();
+		$("#dataLoadedArea" ).show();
+		
+		
+		
+		/* Update the alert boxes */
+		if (sensorActive) {
+			$("#alertBoxOnline" ).show("slow", function() {});
+			$("#upTime").html(millisToHumanTime(data.temperatureInfo.upOrDownTime));
+		} else {
+			$("#alertBoxOffline" ).show("slow", function() {});
+			$("#downTime").html(millisToHumanTime(data.temperatureInfo.upOrDownTime));
+		}
+		
+		/* Latest day updates */
+		$("#latestDayReadingCurrentTemp").html(data.temperatureInfo.currentTemp.temp);
+		$("#latestDayReadingCurrentTime").html(toHHMM(data.temperatureInfo.currentTemp.time));
+		$("#latestDayReadingHighestTemp").html(data.temperatureInfo.todaysTemperature.highestTemperature.temp);
+		$("#latestDayReadingHighestTime").html(toHHMM(data.temperatureInfo.todaysTemperature.highestTemperature.time));
+		$("#latestDayReadingLowestTemp").html(data.temperatureInfo.todaysTemperature.lowestTemperature.temp);
+		$("#latestDayReadingLowestTime").html(toHHMM(data.temperatureInfo.todaysTemperature.lowestTemperature.time));
+		$("#latestDayReadingAverageTemp").html(data.temperatureInfo.todaysTemperature.averageTemperature);
+
+		$("#latestWeekReadingHighestTemp").html(data.temperatureInfo.weeksTemperature.highestTemperature.temp);
+		$("#latestWeekReadingHighestTime").html(toHHMM(data.temperatureInfo.weeksTemperature.highestTemperature.time));
+		$("#latestWeekReadingLowestTemp").html(data.temperatureInfo.weeksTemperature.lowestTemperature.temp);
+		$("#latestWeekReadingLowestTime").html(toHHMM(data.temperatureInfo.weeksTemperature.lowestTemperature.time));
+		$("#latestWeekReadingAverageTemp").html(data.temperatureInfo.weeksTemperature.averageTemperature);
+
+		$("#latestMonthReadingHighestTemp").html(data.temperatureInfo.monthsTemperature.highestTemperature.temp);
+		$("#latestMonthReadingHighestTime").html(toHHMM(data.temperatureInfo.monthsTemperature.highestTemperature.time));
+		$("#latestMonthReadingLowestTemp").html(data.temperatureInfo.monthsTemperature.lowestTemperature.temp);
+		$("#latestMonthReadingLowestTime").html(toHHMM(data.temperatureInfo.monthsTemperature.lowestTemperature.time));
+		$("#latestMonthReadingAverageTemp").html(data.temperatureInfo.monthsTemperature.averageTemperature);
+		
+		
+		
+		chartTemperature({
+							chartContainer: "#chartContainerToday", 
+							dataSource: todaysTemperatureInfo,
+							curveExplanation: "Temp senaste dygnet (C)",
+							title: ""
+						});
+	
+		chartTemperature({
+							chartContainer: "#chartContainerWeek", 
+							dataSource: weeksTemperatureInfo,
+							curveExplanation: "Temp senaste veckan (C)",
+							title: ""
+						});
+	
+		chartTemperature({
+							chartContainer: "#chartContainerMonth", 
+							dataSource: monthsTemperatureInfo,
+							curveExplanation: "Temp senaste månaden (C)",
+							title: ""
+						});
+	
+	});
+	
+		
+		</script>
+	    <script src="js/bootstrap.min.js"></script>
+	    
+	   </div>	
   </body>
 </html>

@@ -1,8 +1,6 @@
 package se.noren.weatherstation;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import se.noren.weatherstation.bean.TemperatureBean;
-import se.noren.weatherstation.bean.TemperatureInfo;
 import se.noren.weatherstation.model.TemperatureReading;
 
 @Controller
@@ -47,4 +44,18 @@ public class WeatherStationController {
 		TemperatureReading temperatureReading = new TemperatureReading(Double.valueOf(temperature), rawDate, key);
 		weatherStationService.addTemperatureReading(temperatureReading);
 	}
+	
+	/**
+	 * Add a new temperature reading to database
+	 * @param key API key
+	 * @param time Time of reading
+	 * @param temperature New temperature value
+	 * @return
+	 */
+	@RequestMapping(value = "/{key}/test", method = RequestMethod.POST)
+	public void addTemperatureReading(@PathVariable String key,	@RequestParam String temperature, @RequestParam long time, HttpServletResponse response) {
+		TemperatureReading temperatureReading = new TemperatureReading(Double.valueOf(temperature), time, key);
+		weatherStationService.addTemperatureReading(temperatureReading);
+	}
+
 }

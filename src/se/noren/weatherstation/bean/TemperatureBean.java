@@ -3,37 +3,35 @@ package se.noren.weatherstation.bean;
 
 public class TemperatureBean {
 
-	private String currentTemp;
-	private long currentTime;
+	private TemperatureInfoFormatted currentTemp;
+	private boolean remoteSensorActive;
+	private String upOrDownTime;
 	private TemperaturePeriodBean todaysTemperature;
 	private TemperaturePeriodBean weeksTemperature;
 	private TemperaturePeriodBean monthsTemperature;
 	
 	
 	
-	public TemperatureBean(String currentTemp, long currentTime,
+	public TemperatureBean(TemperatureInfoFormatted currentTemp, 
+			boolean remoteSensorActive,
+			String upOrDownTime,
 			TemperaturePeriodBean todaysTemperature,
 			TemperaturePeriodBean weeksTemperature,
 			TemperaturePeriodBean monthsTemperature) {
 		super();
 		this.currentTemp = currentTemp;
-		this.currentTime = currentTime;
+		this.remoteSensorActive = remoteSensorActive;
+		this.upOrDownTime = upOrDownTime;
 		this.todaysTemperature = todaysTemperature;
 		this.weeksTemperature = weeksTemperature;
 		this.monthsTemperature = monthsTemperature;
 	}
 	
-	public String getCurrentTemp() {
+	public TemperatureInfoFormatted getCurrentTemp() {
 		return currentTemp;
 	}
-	public void setCurrentTemp(String currentTemp) {
+	public void setCurrentTemp(TemperatureInfoFormatted currentTemp) {
 		this.currentTemp = currentTemp;
-	}
-	public long getCurrentTime() {
-		return currentTime;
-	}
-	public void setCurrentTime(long currentTime) {
-		this.currentTime = currentTime;
 	}
 	public TemperaturePeriodBean getTodaysTemperature() {
 		return todaysTemperature;
@@ -52,6 +50,20 @@ public class TemperatureBean {
 	}
 	public void setMonthsTemperature(TemperaturePeriodBean monthsTemperature) {
 		this.monthsTemperature = monthsTemperature;
+	}
+	public boolean isRemoteSensorActive() {
+		return remoteSensorActive;
+	}
+	public void setRemoteSensorActive(boolean remoteSensorActive) {
+		this.remoteSensorActive = remoteSensorActive;
+	}
+
+	public String getUpOrDownTime() {
+		return upOrDownTime;
+	}
+
+	public void setUpOrDownTime(String upOrDownTime) {
+		this.upOrDownTime = upOrDownTime;
 	}
 	
 }
