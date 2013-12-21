@@ -2,26 +2,27 @@ package se.noren.weatherstation;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import se.noren.weatherstation.adapter.CouchDBAdapter;
+import se.noren.weatherstation.adapter.bean.CouchDBTemperatureDatabaseBean;
+import se.noren.weatherstation.adapter.bean.CouchDBTemperatureDatabaseBean.DBRow;
+import se.noren.weatherstation.adapter.bean.CouchDBTemperatureDatabaseBean.DBRow.DBDoc;
 import se.noren.weatherstation.bean.TemperatureBean;
 import se.noren.weatherstation.bean.TemperatureInfo;
 import se.noren.weatherstation.bean.TemperatureInfoFormatted;
 import se.noren.weatherstation.bean.TemperaturePeriodBean;
 import se.noren.weatherstation.model.TemperatureReading;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-
 @Service
 public class WeatherStationServiceImpl implements WeatherStationService {
 
+//	private static final String COUCHDB_SERVER = "http://localhost:5984";  // Proxy mode
+	private static final String COUCHDB_SERVER = "http://johanhtpc:5984";
+	
 	private static final long DEFINITION_OF_INACTIVE_SENSOR= 1000 * 60 * 15;
 	
 	
@@ -32,20 +33,31 @@ public class WeatherStationServiceImpl implements WeatherStationService {
 	public TemperatureBean getTemperatureReadings(String key) {
 
 		List<TemperatureReading> list = readTemperatureDataFromDatastore(key);
+		
+		boolean hasRegisteredReadings = list.size() > 0; 
+		TemperatureReading currentReading = null;
 
-		TemperatureReading currentReading = list.get(list.size() - 1);
+		if (list.size() != 0) {
+			currentReading = list.get(list.size() - 1);
+		} else {
+			currentReading = new TemperatureReading(0, 0, "");
+		}
+
 		
 		TemperaturePeriodBean todaysTemp = createTemperaturePeriodBean(list, TIME_BETWEEN_DATAPOINTS_HOURLY, 24L * 60 * 60 * 1000);
 		TemperaturePeriodBean weeksTemp = createTemperaturePeriodBean(list, TIME_BETWEEN_DATAPOINTS_FIVE_HOURS, 24L * 60 * 60 * 1000 * 7);
 		TemperaturePeriodBean monthsTemp = createTemperaturePeriodBean(list, TIME_BETWEEN_DATAPOINTS_FIVE_HOURS, 24L * 60 * 60 * 1000 * 30);
 		
 		long now = new Date().getTime();
-		long timeSinceLastReading = now - currentReading.getRawDate();
+		long timeSinceLastReading = 0;
+		if (hasRegisteredReadings) {
+			timeSinceLastReading = now - currentReading.getRawDate();
+		}
 		boolean sensorActive = timeSinceLastReading < DEFINITION_OF_INACTIVE_SENSOR;
 		
 		long onlineOfflineTime = sensorActive ? findActiveTimePeriod(list, now) : timeSinceLastReading;
 		
-		TemperatureBean temperatureBean = new TemperatureBean(new TemperatureInfoFormatted(FormatUtil.round(currentReading.getTemperature(), 1), 
+		TemperatureBean temperatureBean = new TemperatureBean(hasRegisteredReadings, new TemperatureInfoFormatted(FormatUtil.round(currentReading.getTemperature(), 1), 
 															  								currentReading.getRawDate()),
 															  sensorActive,
 															  String.valueOf(onlineOfflineTime), 
@@ -115,36 +127,45 @@ public class WeatherStationServiceImpl implements WeatherStationService {
 
 	private ArrayList<TemperatureReading> readTemperatureDataFromDatastore(String key) {
 		ArrayList<TemperatureReading> list = new ArrayList<TemperatureReading>();
-		DatastoreService datastore = DatastoreServiceFactory
-				.getDatastoreService();
-
-		// The Query interface assembles a query
-		Query q = new Query("TemperatureReading");
-		q.addFilter("key", Query.FilterOperator.EQUAL, key);
-		q.addSort("rawDate", SortDirection.ASCENDING);
-
-		// PreparedQuery contains the methods for fetching query results
-		// from the datastore
-		PreparedQuery pq = datastore.prepare(q);
-
-		for (Entity result : pq.asIterable()) {
-			double temp = (Double) result.getProperty("temperature");
-			long rawDate = (Long) result.getProperty("rawDate");
-			list.add(new TemperatureReading(temp, rawDate, key));
+	
+		CouchDBAdapter adapter = new CouchDBAdapter();
+		CouchDBTemperatureDatabaseBean databaseBean = adapter.get(COUCHDB_SERVER + "/" + key + "/_all_docs?include_docs=true", CouchDBTemperatureDatabaseBean.class, new HashMap<String, String>());
+		for (DBRow dbRow : databaseBean.getRows()) {
+			DBDoc doc = dbRow.getDoc();
+			TemperatureReading reading = new TemperatureReading(doc.getTemperature(), doc.getRawDate(), doc.getKey());
+			list.add(reading);
 		}
+//
+//		// The Query interface assembles a query
+//		Query q = new Query("TemperatureReading");
+//		q.addFilter("key", Query.FilterOperator.EQUAL, key);
+//		q.addSort("rawDate", SortDirection.ASCENDING);
+//
+//		// PreparedQuery contains the methods for fetching query results
+//		// from the datastore
+//		PreparedQuery pq = datastore.prepare(q);
+//
+//		for (Entity result : pq.asIterable()) {
+//			double temp = (Double) result.getProperty("temperature");
+//			long rawDate = (Long) result.getProperty("rawDate");
+//			list.add(new TemperatureReading(temp, rawDate, key));
+//		}
 		return list;
 	}
 
 	@Override
 	public void addTemperatureReading(TemperatureReading reading) {
-		DatastoreService datastore = DatastoreServiceFactory
-				.getDatastoreService();
-
-		Entity hs = new Entity("TemperatureReading");
-		hs.setProperty("temperature", reading.getTemperature());
-		hs.setProperty("rawDate", reading.getRawDate());
-		hs.setProperty("key", reading.getKey());
-		datastore.put(hs);
+		CouchDBAdapter adapter = new CouchDBAdapter();
+		adapter.post(COUCHDB_SERVER + "/" + reading.getKey(), reading);
+		
+//		DatastoreService datastore = DatastoreServiceFactory
+//				.getDatastoreService();
+//
+//		Entity hs = new Entity("TemperatureReading");
+//		hs.setProperty("temperature", reading.getTemperature());
+//		hs.setProperty("rawDate", reading.getRawDate());
+//		hs.setProperty("key", reading.getKey());
+//		datastore.put(hs);
 	}
 
 }
