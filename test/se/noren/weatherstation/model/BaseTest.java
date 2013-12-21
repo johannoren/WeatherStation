@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class BaseTest extends RestTemplate {
 
-	private final static String BASE_URL = "http://localhost:8888";
+	private final static String BASE_URL = "http://localhost:8080";
 
 	private MediaType defaultResponseContentType;
 

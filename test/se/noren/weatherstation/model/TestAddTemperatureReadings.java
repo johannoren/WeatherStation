@@ -41,6 +41,6 @@ public class TestAddTemperatureReadings extends BaseTest {
 		map.add("temperature", temp);
 		map.add("time", time);
 		
-		post("/api/temperature/" + APPKEY + "/test", map);
+		post("/WeatherStationServer/api/temperature/" + APPKEY + "/test", map);
 	}
 }
