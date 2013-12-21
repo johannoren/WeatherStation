@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 
 public class CouchDBAdapter extends RestTemplate {
 
-	private final static String BASE_URL = "http://johanhtpc:5984";
 
 	private MediaType defaultResponseContentType;
 
@@ -44,21 +43,38 @@ public class CouchDBAdapter extends RestTemplate {
 									defaultResponseContentType);
 						}
 
-						return responseExtractor.extractData(response);
+						if (responseExtractor != null)
+							return responseExtractor.extractData(response);
+						else
+							return null;
 					}
 				});
 	}
 
-	protected <T> T get(String path, Class<T> type,  Map<String, String> params) {
+	public <T> T get(String path, Class<T> type,  Map<String, String> params) {
 
 		T result = getForObject(path, type, params);
 		return result;
 	}
 
-	
-	protected String post(String path, MultiValueMap<String, String> parameters) {
+	public String post(String path, Object obj) {
 
-		String result = postForObject(BASE_URL + path, parameters, String.class);
+		String result = postForObject(path, obj, String.class);
 		return result;
 	}
+	
+	public String post(String path, MultiValueMap<String, String> parameters) {
+
+		String result = postForObject(path, parameters, String.class);
+		return result;
+	}
+	
+	public void put(String path) {
+		super.put(path, null);
+	}
+
+	public void delete(String path) {
+		super.delete(path);
+	}
+
 }
