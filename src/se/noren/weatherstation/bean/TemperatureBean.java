@@ -3,6 +3,7 @@ package se.noren.weatherstation.bean;
 
 public class TemperatureBean {
 
+	private boolean hasRegisteredData;
 	private TemperatureInfoFormatted currentTemp;
 	private boolean remoteSensorActive;
 	private String upOrDownTime;
@@ -11,14 +12,24 @@ public class TemperatureBean {
 	private TemperaturePeriodBean monthsTemperature;
 	
 	
-	
-	public TemperatureBean(TemperatureInfoFormatted currentTemp, 
+	/**
+	 * Data carrier to exposure layer
+	 * @param hasRegisteredData If this is false, nothing below is relevant!
+	 * @param currentTemp
+	 * @param remoteSensorActive
+	 * @param upOrDownTime
+	 * @param todaysTemperature
+	 * @param weeksTemperature
+	 * @param monthsTemperature
+	 */
+	public TemperatureBean(boolean hasRegisteredData, TemperatureInfoFormatted currentTemp, 
 			boolean remoteSensorActive,
 			String upOrDownTime,
 			TemperaturePeriodBean todaysTemperature,
 			TemperaturePeriodBean weeksTemperature,
 			TemperaturePeriodBean monthsTemperature) {
 		super();
+		this.hasRegisteredData = hasRegisteredData;
 		this.currentTemp = currentTemp;
 		this.remoteSensorActive = remoteSensorActive;
 		this.upOrDownTime = upOrDownTime;
@@ -65,5 +76,15 @@ public class TemperatureBean {
 	public void setUpOrDownTime(String upOrDownTime) {
 		this.upOrDownTime = upOrDownTime;
 	}
+
+	public boolean isHasRegisteredData() {
+		return hasRegisteredData;
+	}
+
+	public void setHasRegisteredData(boolean hasRegisteredData) {
+		this.hasRegisteredData = hasRegisteredData;
+	}
+	
+	
 	
 }
