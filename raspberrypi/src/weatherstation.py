@@ -36,7 +36,7 @@ while True:
         params = urllib.urlencode({'temperature': temp})
         headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
         conn = httplib.HTTPConnection("192.168.1.4:8888")
-        conn.request("POST", "/api/temperature/stugan", params, headers)
+        conn.request("POST", "/WeatherStationServer/api/temperature/holmon", params, headers)
         response = conn.getresponse()
         print response.status, response.reason
         data = response.read()
@@ -44,4 +44,4 @@ while True:
     except Exception, e:
         print e.__doc__
         print e.message
-    time.sleep(120)
+    time.sleep(600)
