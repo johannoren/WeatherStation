@@ -10,6 +10,9 @@
 	<script src="js/globalize.min.js"></script>
 	<script src="js/dx.chartjs.js"></script>   
 	<script src="js/underscore.js"></script>   
+	<script src="js/weatherstation.js"></script>   
+	
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
   	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -42,6 +45,9 @@
 			</div>
 			<div id="dataNotLoadedArea">
 				<img src="images/loading.gif" alt="Loading data..." />
+			</div>
+			<div id="dataNotAvailableArea" style="display:none">
+				<div class="alert alert-danger">Det finns inga registrerade temperaturmätningar för denna sensor. Kontrollera att temperatursensorn är inkopplad, har nätverksanslutning och skickar data till mätservern.</div>						
 			</div>
 			
 			<div id="dataLoadedArea" style="display:none">
@@ -120,51 +126,6 @@
 			<script>
 	
 	
-	var queryString = function () {
-	  // This function is anonymous, is executed immediately and 
-	  // the return value is assigned to QueryString!
-	  var query_string = {};
-	  var query = window.location.search.substring(1);
-	  var vars = query.split("&");
-	  for (var i=0;i<vars.length;i++) {
-	    var pair = vars[i].split("=");
-	    	// If first entry with this name
-	    if (typeof query_string[pair[0]] === "undefined") {
-	      query_string[pair[0]] = pair[1];
-	    	// If second entry with this name
-	    } else if (typeof query_string[pair[0]] === "string") {
-	      var arr = [ query_string[pair[0]], pair[1] ];
-	      query_string[pair[0]] = arr;
-	    	// If third or later entry with this name
-	    } else {
-	      query_string[pair[0]].push(pair[1]);
-	    }
-	  } 
-	    return query_string;
-	} ();
-	
-	function zeroPad(n) {
-		if (n < 10) {
-			n = "0" + "" + n;
-		}
-		return n;
-	}
-	
-	function toHHMM(rawTime) {
-		var d = new Date(rawTime);
-		var m = d.getMinutes();
-		var h = d.getHours();
-		return zeroPad(h) + ":" + zeroPad(m);
-	}
-	
-	function toYYMMDDHHMM(rawTime) {
-		var d = new Date(rawTime);
-		var m = zeroPad(d.getMinutes());
-		var day = zeroPad(d.getDate());
-		var h = zeroPad(d.getHours());
-		var mo = zeroPad(d.getMonth() + 1);
-		return d.getFullYear() + "" + mo + "" + day + "-" + h + ":" + m;
-	}
 	
 	
 	function chartTemperature(settings) {
@@ -213,30 +174,13 @@
 	}
 	
 	
-	function millisToHumanTime(millis) {
-		var secs = Math.floor(millis / 1000) % 60;
-		var mins = Math.floor(millis / 60000) % 60;
-		var hours = Math.floor(millis / 3600000) % 24;
-		var days = Math.floor(millis / 86400000);
 
-		var str = "";
-		
-		if (days > 0) {
-			if (days === 1) {
-				str = "1 dag ";
-			} else {
-				str = days + " dagar ";
-			}
-		}
-		str = str + zeroPad(hours) + ":" + zeroPad(mins) + ":" + zeroPad(secs);
-		return str;
-	}
 	
 	
 	/* Which application key are we using? */
 	var key = queryString.key;
 	if (key === undefined) {
-		key = "stugan";
+		key = "holmon";
 	}
 	
 	/* Setup init state before AJAX */ 
@@ -244,7 +188,7 @@
 	$("#alertBoxOffline").hide();
 	
 	
-	$.get("/api/temperature/" + key, function(data,status) {
+	$.get("/WeatherStationServer/api/temperature/" + key, function(data,status) {
 		
 		function tempInfoConverterHHMM(info) { 
 			return { 
@@ -260,73 +204,89 @@
 			}; 
 		}
 		
-		var sensorActive = data.temperatureInfo.remoteSensorActive;
-		var currentTemp = data.temperatureInfo.currentTemp;
+		function updateGUIWhenDataIsAvailable(temperatureInfo) {
+			var sensorActive = temperatureInfo.remoteSensorActive;
+			var currentTemp = temperatureInfo.currentTemp;
+			
+			var todaysLowestTemperature = temperatureInfo.todaysTemperature.lowestTemperature;
+			var todaysHighestTemperature = temperatureInfo.todaysTemperature.highestTemperature;
+			var todaysTemperatureInfo = _.map(temperatureInfo.todaysTemperature.temperatureInfo, tempInfoConverterHHMM);
+			var weeksTemperatureInfo = _.map(temperatureInfo.weeksTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+			var monthsTemperatureInfo = _.map(temperatureInfo.monthsTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+			
+			/* Switch from loading mode to display mode */
+			$("#dataNotLoadedArea").hide();
+			$("#dataLoadedArea").show();
+			
+			
+			
+			/* Update the alert boxes */
+			if (sensorActive) {
+				$("#alertBoxOnline").show("slow", function() {});
+				$("#upTime").html(millisToHumanTime(temperatureInfo.upOrDownTime));
+			} else {
+				$("#alertBoxOffline").show("slow", function() {});
+				$("#downTime").html(millisToHumanTime(temperatureInfo.upOrDownTime));
+			}
+			
+			/* Latest day updates */
+			$("#latestDayReadingCurrentTemp").html(temperatureInfo.currentTemp.temp);
+			$("#latestDayReadingCurrentTime").html(toHHMM(temperatureInfo.currentTemp.time));
+			$("#latestDayReadingHighestTemp").html(temperatureInfo.todaysTemperature.highestTemperature.temp);
+			$("#latestDayReadingHighestTime").html(toHHMM(temperatureInfo.todaysTemperature.highestTemperature.time));
+			$("#latestDayReadingLowestTemp").html(temperatureInfo.todaysTemperature.lowestTemperature.temp);
+			$("#latestDayReadingLowestTime").html(toHHMM(temperatureInfo.todaysTemperature.lowestTemperature.time));
+			$("#latestDayReadingAverageTemp").html(temperatureInfo.todaysTemperature.averageTemperature);
 
-		var todaysLowestTemperature = data.temperatureInfo.todaysTemperature.lowestTemperature;
-		var todaysHighestTemperature = data.temperatureInfo.todaysTemperature.highestTemperature;
-		var todaysTemperatureInfo = _.map(data.temperatureInfo.todaysTemperature.temperatureInfo, tempInfoConverterHHMM);
-		var weeksTemperatureInfo = _.map(data.temperatureInfo.weeksTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
-		var monthsTemperatureInfo = _.map(data.temperatureInfo.monthsTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+			$("#latestWeekReadingHighestTemp").html(temperatureInfo.weeksTemperature.highestTemperature.temp);
+			$("#latestWeekReadingHighestTime").html(toHHMM(temperatureInfo.weeksTemperature.highestTemperature.time));
+			$("#latestWeekReadingLowestTemp").html(temperatureInfo.weeksTemperature.lowestTemperature.temp);
+			$("#latestWeekReadingLowestTime").html(toHHMM(temperatureInfo.weeksTemperature.lowestTemperature.time));
+			$("#latestWeekReadingAverageTemp").html(temperatureInfo.weeksTemperature.averageTemperature);
+
+			$("#latestMonthReadingHighestTemp").html(temperatureInfo.monthsTemperature.highestTemperature.temp);
+			$("#latestMonthReadingHighestTime").html(toHHMM(temperatureInfo.monthsTemperature.highestTemperature.time));
+			$("#latestMonthReadingLowestTemp").html(temperatureInfo.monthsTemperature.lowestTemperature.temp);
+			$("#latestMonthReadingLowestTime").html(toHHMM(temperatureInfo.monthsTemperature.lowestTemperature.time));
+			$("#latestMonthReadingAverageTemp").html(temperatureInfo.monthsTemperature.averageTemperature);
+			
+			
+			
+			chartTemperature({
+								chartContainer: "#chartContainerToday", 
+								dataSource: todaysTemperatureInfo,
+								curveExplanation: "Temp senaste dygnet (C)",
+								title: ""
+							});
 		
-		/* Switch from loading mode to display mode */
-		$("#dataNotLoadedArea" ).hide();
-		$("#dataLoadedArea" ).show();
+			chartTemperature({
+								chartContainer: "#chartContainerWeek", 
+								dataSource: weeksTemperatureInfo,
+								curveExplanation: "Temp senaste veckan (C)",
+								title: ""
+							});
 		
-		
-		
-		/* Update the alert boxes */
-		if (sensorActive) {
-			$("#alertBoxOnline" ).show("slow", function() {});
-			$("#upTime").html(millisToHumanTime(data.temperatureInfo.upOrDownTime));
-		} else {
-			$("#alertBoxOffline" ).show("slow", function() {});
-			$("#downTime").html(millisToHumanTime(data.temperatureInfo.upOrDownTime));
+			chartTemperature({
+								chartContainer: "#chartContainerMonth", 
+								dataSource: monthsTemperatureInfo,
+								curveExplanation: "Temp senaste månaden (C)",
+								title: ""
+							});
 		}
 		
-		/* Latest day updates */
-		$("#latestDayReadingCurrentTemp").html(data.temperatureInfo.currentTemp.temp);
-		$("#latestDayReadingCurrentTime").html(toHHMM(data.temperatureInfo.currentTemp.time));
-		$("#latestDayReadingHighestTemp").html(data.temperatureInfo.todaysTemperature.highestTemperature.temp);
-		$("#latestDayReadingHighestTime").html(toHHMM(data.temperatureInfo.todaysTemperature.highestTemperature.time));
-		$("#latestDayReadingLowestTemp").html(data.temperatureInfo.todaysTemperature.lowestTemperature.temp);
-		$("#latestDayReadingLowestTime").html(toHHMM(data.temperatureInfo.todaysTemperature.lowestTemperature.time));
-		$("#latestDayReadingAverageTemp").html(data.temperatureInfo.todaysTemperature.averageTemperature);
+		var hasRegisteredData = data.temperatureInfo.hasRegisteredData;
 
-		$("#latestWeekReadingHighestTemp").html(data.temperatureInfo.weeksTemperature.highestTemperature.temp);
-		$("#latestWeekReadingHighestTime").html(toHHMM(data.temperatureInfo.weeksTemperature.highestTemperature.time));
-		$("#latestWeekReadingLowestTemp").html(data.temperatureInfo.weeksTemperature.lowestTemperature.temp);
-		$("#latestWeekReadingLowestTime").html(toHHMM(data.temperatureInfo.weeksTemperature.lowestTemperature.time));
-		$("#latestWeekReadingAverageTemp").html(data.temperatureInfo.weeksTemperature.averageTemperature);
+		/* Do we have any temperature readings available on the server? */
+		
+		if (hasRegisteredData) {
+			updateGUIWhenDataIsAvailable(data.temperatureInfo);
+		} else {
+			/* Show the error message for sensro failures */
+			$("#dataNotLoadedArea").hide();
+			$("#dataLoadedArea").hide();
+			$("#dataNotAvailableArea").show();
+		}
 
-		$("#latestMonthReadingHighestTemp").html(data.temperatureInfo.monthsTemperature.highestTemperature.temp);
-		$("#latestMonthReadingHighestTime").html(toHHMM(data.temperatureInfo.monthsTemperature.highestTemperature.time));
-		$("#latestMonthReadingLowestTemp").html(data.temperatureInfo.monthsTemperature.lowestTemperature.temp);
-		$("#latestMonthReadingLowestTime").html(toHHMM(data.temperatureInfo.monthsTemperature.lowestTemperature.time));
-		$("#latestMonthReadingAverageTemp").html(data.temperatureInfo.monthsTemperature.averageTemperature);
-		
-		
-		
-		chartTemperature({
-							chartContainer: "#chartContainerToday", 
-							dataSource: todaysTemperatureInfo,
-							curveExplanation: "Temp senaste dygnet (C)",
-							title: ""
-						});
-	
-		chartTemperature({
-							chartContainer: "#chartContainerWeek", 
-							dataSource: weeksTemperatureInfo,
-							curveExplanation: "Temp senaste veckan (C)",
-							title: ""
-						});
-	
-		chartTemperature({
-							chartContainer: "#chartContainerMonth", 
-							dataSource: monthsTemperatureInfo,
-							curveExplanation: "Temp senaste månaden (C)",
-							title: ""
-						});
 	
 	});
 	
