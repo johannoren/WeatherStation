@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8">
+<title>Weather Station unit tests</title>
+
+<link rel="stylesheet" href="../vendor/qunit.css">
+<script src="../vendor/qunit.js"></script>
+<script src="../weatherstation.js"></script>
+
+<script>
+	test("Test zero padding", function() {
+		equal(zeroPad(0), "00");
+		equal(zeroPad(5), "05");
+		equal(zeroPad(9), "09");
+		equal(zeroPad(10), "10");
+		equal(zeroPad(50), "50");
+		equal(zeroPad(5000), "5000");
+	});
+
+	test("Test millis to human time conversion", function() {
+		equal(millisToHumanTime(1000), "00:00:01");
+		equal(millisToHumanTime(30000), "00:00:30");
+		equal(millisToHumanTime(1000 * 15 + 1000 * 60 * 7), "00:07:15");
+		equal(millisToHumanTime(1000 * 15 + 1000 * 60 * 7 + 1000 * 60 * 60 * 4), "04:07:15");
+		equal(millisToHumanTime(1000 * 15 + 1000 * 60 * 7 + 1000 * 60 * 60 * 4 + 1000 * 60 * 60 * 24), "1 dag 04:07:15");
+		equal(millisToHumanTime(1000 * 15 + 1000 * 60 * 7 + 1000 * 60 * 60 * 4 + 1000 * 60 * 60 * 24 * 6), "6 dagar 04:07:15");
+	});
+	
+	test("Test time conversions", function() {
+		equal(toYYYYMMDD(1387301880534), "20131217");
+		equal(toYYMMDDHHMM(1387301880534), "2013-12-17 18:38");
+		equal(toHHMM(1387301880534), "18:38");
+	});
+
+	test("Test weekday names", function() {
+		equal(getSwedishWeekdayName(1387301880534), "Tisdag");
+		equal(getSwedishWeekdayName(1387721147000), "S&ouml;ndag");
+	});	
+	
+	
+</script>
+</head>
+<body>
+
+	<div id="qunit"></div>
+
+</body>
+</html>
