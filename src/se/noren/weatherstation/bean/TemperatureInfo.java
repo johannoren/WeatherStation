@@ -1,5 +1,7 @@
 package se.noren.weatherstation.bean;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class TemperatureInfo {
 
 	private double temp;
@@ -22,5 +24,10 @@ public class TemperatureInfo {
 	}
 	public void setTime(long time) {
 		this.time = time;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

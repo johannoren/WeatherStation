@@ -35,7 +35,8 @@ while True:
         print(temp)
         params = urllib.urlencode({'temperature': temp})
         headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-        conn = httplib.HTTPConnection("192.168.1.4:8888")
+        #conn = httplib.HTTPConnection("192.168.1.6:8080")
+        conn = httplib.HTTPConnection("213-21-80-50.customer.t3.se:8080")
         conn.request("POST", "/WeatherStationServer/api/temperature/holmon", params, headers)
         response = conn.getresponse()
         print response.status, response.reason

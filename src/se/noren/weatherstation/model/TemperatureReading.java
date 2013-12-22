@@ -1,6 +1,8 @@
 package se.noren.weatherstation.model;
 
-public class TemperatureReading {
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+public class TemperatureReading implements Comparable<TemperatureReading> {
 
 	private double temperature;
 	private long rawDate;
@@ -30,5 +32,20 @@ public class TemperatureReading {
 	}
 	public void setTemperature(double temperature) {
 		this.temperature = temperature;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
+	@Override
+	public int compareTo(TemperatureReading o) {
+		long diff = this.rawDate - o.getRawDate();
+		if (diff == 0) 
+			return 0;
+		if (diff > 0) 
+			return 1;
+		return -1;
 	}
 }

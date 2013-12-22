@@ -1,5 +1,7 @@
 package se.noren.weatherstation;
 
+import java.text.ParseException;
+
 import se.noren.weatherstation.bean.TemperatureBean;
 import se.noren.weatherstation.model.TemperatureReading;
 
@@ -15,7 +17,7 @@ public interface WeatherStationService {
 	 * @param key Unique key for the client application
 	 * @return A bean containing temperature information about this client
 	 */
-	public TemperatureBean getTemperatureReadings(String key);
+	public TemperatureBean getTemperatureReadings(String key, String detailedDate) throws ParseException;
 	
 	/**
 	 * Add a temperature reading to the data model

@@ -32,9 +32,7 @@
 
   	  
   	  
-	  $(function() {
-	    $( "#datepicker" ).datepicker({ dateFormat: "yymmdd" });
-	  });
+
 	  </script>
   </head>
 
@@ -53,12 +51,13 @@
 			<div id="dataLoadedArea" style="display:none">
 				<div class="alert alert-success" id="alertBoxOnline">Fjärrsensorn har varit <b>online</b> <span id="upTime"></span>.</div>
 				<div class="alert alert-danger" id="alertBoxOffline">Fjärrsensorn har varit <b>offline</b> <span id="downTime"></span></div>						
-	
-				<h2>Senaste dygnet</h2>
+
 				<div class="row">
 					<div class="col-xs-6 col-md-4">Senaste mätningen:</div>
 					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingCurrentTemp"></span> &deg;C kl <span id="latestDayReadingCurrentTime"></span></b></div>
 				</div>  	
+	
+				<h2><span id="detailedDayCaption"></span></h2>
 				<div class="row">
 					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
 					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingHighestTemp"></span> &deg;C kl <span id="latestDayReadingHighestTime"></span></b></div>
@@ -77,6 +76,18 @@
 						<div id="chartContainerToday" class="containers" style="height: 300px; width: 100%;"></div>
 					</div>
 				</div>  	
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<button type="button" class="btn btn-default" id="goBackBtn">
+						  <span class="glyphicon glyphicon-arrow-left"></span> En dag bakåt
+						</button>					
+						<input type="text" id="datepicker">
+						<button type="button" class="btn btn-default" id="goForwardBtn">
+						  <span class="glyphicon glyphicon-arrow-right"></span> En dag framåt
+						</button>					
+					</div>
+				</div>  	
+		
 	
 				<h2>Senaste veckan</h2>
 				<div class="row">
@@ -173,6 +184,9 @@
 	         s4() + '-' + s4() + s4() + s4();
 	}
 	
+	function reloadWithDifferentDate(yyyymmdd, key) {
+		window.location.search = "key=" + key + "&date=" + yyyymmdd; 
+	}
 	
 
 	
@@ -182,13 +196,17 @@
 	if (key === undefined) {
 		key = "holmon";
 	}
+	var detailedDate = queryString.date;
+	if (detailedDate === undefined) {
+		detailedDate = toYYYYMMDD(new Date());
+	}
 	
 	/* Setup init state before AJAX */ 
 	$("#alertBoxOnline").hide();
 	$("#alertBoxOffline").hide();
 	
 	
-	$.get("/WeatherStationServer/api/temperature/" + key, function(data,status) {
+	$.get("/WeatherStationServer/api/temperature/" + key + "?date=" + detailedDate, function(data, status) {
 		
 		function tempInfoConverterHHMM(info) { 
 			return { 
@@ -204,7 +222,7 @@
 			}; 
 		}
 		
-		function updateGUIWhenDataIsAvailable(temperatureInfo) {
+		function updateGUIWhenDataIsAvailable(temperatureInfo, key) {
 			var sensorActive = temperatureInfo.remoteSensorActive;
 			var currentTemp = temperatureInfo.currentTemp;
 			
@@ -231,23 +249,51 @@
 			
 			/* Latest day updates */
 			$("#latestDayReadingCurrentTemp").html(temperatureInfo.currentTemp.temp);
-			$("#latestDayReadingCurrentTime").html(toHHMM(temperatureInfo.currentTemp.time));
+			$("#latestDayReadingCurrentTime").html(toYYMMDDHHMM(temperatureInfo.currentTemp.time));
 			$("#latestDayReadingHighestTemp").html(temperatureInfo.todaysTemperature.highestTemperature.temp);
 			$("#latestDayReadingHighestTime").html(toHHMM(temperatureInfo.todaysTemperature.highestTemperature.time));
 			$("#latestDayReadingLowestTemp").html(temperatureInfo.todaysTemperature.lowestTemperature.temp);
 			$("#latestDayReadingLowestTime").html(toHHMM(temperatureInfo.todaysTemperature.lowestTemperature.time));
 			$("#latestDayReadingAverageTemp").html(temperatureInfo.todaysTemperature.averageTemperature);
+			var detailedDay = toYYYYMMDD(temperatureInfo.todaysTemperature.periodToDate);
+			if (detailedDay === toYYYYMMDD(new Date())) {
+				$("#detailedDayCaption").html("Senaste dygnet");
+			} else {
+				$("#detailedDayCaption").html(getSwedishWeekdayName(temperatureInfo.todaysTemperature.periodToDate) + " " + toYYYYMMDDDashed(temperatureInfo.todaysTemperature.periodToDate));
+			}
 
+			$('#datepicker').datepicker({ 
+				dateFormat: "yymmdd",
+				onSelect: function(dateText) {
+					var selected = $("#datepicker").datepicker("getDate");
+					var formatted = toYYYYMMDD(selected.getTime());
+					reloadWithDifferentDate(formatted, key);
+				}
+			});
+			
+			$('#datepicker').datepicker("setDate", new Date(temperatureInfo.todaysTemperature.periodToDate));
+			
+			$('#goBackBtn').on('click', function (e) {
+				var newDate = toYYYYMMDD(addDays(new Date(temperatureInfo.todaysTemperature.periodToDate), -1));
+				reloadWithDifferentDate(newDate, key);
+			})
+			$('#goForwardBtn').on('click', function (e) {
+				var newDate = toYYYYMMDD(addDays(new Date(temperatureInfo.todaysTemperature.periodToDate), 1));
+				reloadWithDifferentDate(newDate, key);
+			})
+			
+			/* Latest week*/
 			$("#latestWeekReadingHighestTemp").html(temperatureInfo.weeksTemperature.highestTemperature.temp);
-			$("#latestWeekReadingHighestTime").html(toHHMM(temperatureInfo.weeksTemperature.highestTemperature.time));
+			$("#latestWeekReadingHighestTime").html(toYYMMDDHHMM(temperatureInfo.weeksTemperature.highestTemperature.time));
 			$("#latestWeekReadingLowestTemp").html(temperatureInfo.weeksTemperature.lowestTemperature.temp);
-			$("#latestWeekReadingLowestTime").html(toHHMM(temperatureInfo.weeksTemperature.lowestTemperature.time));
+			$("#latestWeekReadingLowestTime").html(toYYMMDDHHMM(temperatureInfo.weeksTemperature.lowestTemperature.time));
 			$("#latestWeekReadingAverageTemp").html(temperatureInfo.weeksTemperature.averageTemperature);
 
+			/* Latest month*/
 			$("#latestMonthReadingHighestTemp").html(temperatureInfo.monthsTemperature.highestTemperature.temp);
-			$("#latestMonthReadingHighestTime").html(toHHMM(temperatureInfo.monthsTemperature.highestTemperature.time));
+			$("#latestMonthReadingHighestTime").html(toYYMMDDHHMM(temperatureInfo.monthsTemperature.highestTemperature.time));
 			$("#latestMonthReadingLowestTemp").html(temperatureInfo.monthsTemperature.lowestTemperature.temp);
-			$("#latestMonthReadingLowestTime").html(toHHMM(temperatureInfo.monthsTemperature.lowestTemperature.time));
+			$("#latestMonthReadingLowestTime").html(toYYMMDDHHMM(temperatureInfo.monthsTemperature.lowestTemperature.time));
 			$("#latestMonthReadingAverageTemp").html(temperatureInfo.monthsTemperature.averageTemperature);
 			
 			
@@ -279,7 +325,7 @@
 		/* Do we have any temperature readings available on the server? */
 		
 		if (hasRegisteredData) {
-			updateGUIWhenDataIsAvailable(data.temperatureInfo);
+			updateGUIWhenDataIsAvailable(data.temperatureInfo, key);
 		} else {
 			/* Show the error message for sensro failures */
 			$("#dataNotLoadedArea").hide();

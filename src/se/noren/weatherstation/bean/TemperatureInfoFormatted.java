@@ -1,5 +1,7 @@
 package se.noren.weatherstation.bean;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import se.noren.weatherstation.FormatUtil;
 
 public class TemperatureInfoFormatted {
@@ -30,5 +32,10 @@ public class TemperatureInfoFormatted {
 	}
 	public void setTime(long time) {
 		this.time = time;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

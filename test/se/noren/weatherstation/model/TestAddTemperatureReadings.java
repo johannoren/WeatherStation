@@ -12,20 +12,20 @@ import org.springframework.util.MultiValueMap;
 
 public class TestAddTemperatureReadings extends BaseTest {
 	
-	private static final String APPKEY = "testkey";
+	private static final String APPKEY = "holmon";
 
 	@Test
 	public void testAddingTwoMonthsOfReadings() {
 		long period = 1000L * 60 * 60 * 24; // 24 h
 		long now = new Date().getTime();
 		long twoMonthsAgo = now - 1000L * 60 * 60 * 24 * 30 * 2;
-		long interval = 1000 * 60 * 5; // 5 min
+		long interval = 1000 * 60 * 10; // 5 min
 		long time = twoMonthsAgo;
 		DateFormat df = DateFormat.getDateInstance();
 		Random random = new Random();
 		 
 		while (time < now) {
-			double temp = 10.0 + Math.sin(time * 2.0 * Math.PI / period) * 2.5 + random.nextDouble() * 1;
+			double temp = 21.0 + Math.sin(time * 2.0 * Math.PI / period) * 1.5 + random.nextDouble() * 1.5;
 			System.out.println("Posting for time " + df.format(new Date(time)) + "\t temp: " + temp);
 			postReading(String.valueOf(temp), String.valueOf(time));
 			
