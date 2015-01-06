@@ -26,7 +26,7 @@
 	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 	
-	  ga('create', 'UA-46361998-1', 'stugmonitor.appspot.com');
+	  ga('create', 'UA-46361998-1', '213-21-80-50.customer.t3.se');
 	  ga('send', 'pageview');
 
 
@@ -53,29 +53,54 @@
 				<div class="alert alert-danger" id="alertBoxOffline">Fjärrsensorn har varit <b>offline</b> <span id="downTime"></span></div>						
 
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Senaste mätningen:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingCurrentTemp"></span> &deg;C kl <span id="latestDayReadingCurrentTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Senaste mätning inomhus:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingCurrentTemp1"></span> &deg;C kl <span id="latestDayReadingCurrentTime1"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Senaste mätning utomhus:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingCurrentTemp2">### Not connected ###</span> &deg;C kl <span id="latestDayReadingCurrentTime2"></span></b></div>
 				</div>  	
 	
 				<h2><span id="detailedDayCaption"></span></h2>
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingHighestTemp"></span> &deg;C kl <span id="latestDayReadingHighestTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Högsta temperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingHighestTemp1"></span> &deg;C kl <span id="latestDayReadingHighestTime1"></span></b></div>
 				</div>  	
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Lägsta temperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingLowestTemp"></span> &deg;C kl <span id="latestDayReadingLowestTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Lägsta temperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingLowestTemp1"></span> &deg;C kl <span id="latestDayReadingLowestTime1"></span></b></div>
 				</div>  	
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Medeltemperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingAverageTemp"></span> &deg;C</b></div>
+					<div class="col-xs-6 col-md-4">Medeltemperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingAverageTemp1"></span> &deg;C</b></div>
 				</div>  	
 				<br/>
 				<div class="row">
 					<div class="col-xs-12 col-md-12">
-						<div id="chartContainerToday" class="containers" style="height: 300px; width: 100%;"></div>
+						<div id="chartContainerToday1" class="containers" style="height: 300px; width: 100%;"></div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Högsta temperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingHighestTemp2">### Not connected ###</span> &deg;C kl <span id="latestDayReadingHighestTime2"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Lägsta temperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingLowestTemp2">### Not connected ###</span> &deg;C kl <span id="latestDayReadingLowestTime2"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Medeltemperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestDayReadingAverageTemp2">### Not connected ###</span> &deg;C</b></div>
+				</div>  	
+				<br/>
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div id="chartContainerToday2" class="containers" style="height: 300px; width: 100%;"></div>
 					</div>
 				</div>  	
+
+				  	
 				<div class="row">
 					<div class="col-xs-12 col-md-12">
 						<button type="button" class="btn btn-default" id="goBackBtn">
@@ -91,47 +116,94 @@
 	
 				<h2>Senaste veckan</h2>
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingHighestTemp"></span> &deg;C kl <span id="latestWeekReadingHighestTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Högsta temperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingHighestTemp1"></span> &deg;C kl <span id="latestWeekReadingHighestTime1"></span></b></div>
 				</div>  	
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Lägsta temperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingLowestTemp"></span> &deg;C kl <span id="latestWeekReadingLowestTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Lägsta temperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingLowestTemp1"></span> &deg;C kl <span id="latestWeekReadingLowestTime1"></span></b></div>
 				</div>  	
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Medeltemperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingAverageTemp"></span> &deg;C</b></div>
+					<div class="col-xs-6 col-md-4">Medeltemperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingAverageTemp1"></span> &deg;C</b></div>
 				</div>  	
 	
 				<br/>
 		
 				<div class="row">
 					<div class="col-xs-12 col-md-12">
-						<div id="chartContainerWeek" class="containers" style="height: 300px; width: 100%;"></div>
+						<div id="chartContainerWeek1" class="containers" style="height: 300px; width: 100%;"></div>
 					</div>
 				</div>  	
+
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Högsta temperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingHighestTemp2">### Not connected ###</span> &deg;C kl <span id="latestWeekReadingHighestTime2"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Lägsta temperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingLowestTemp2">### Not connected ###</span> &deg;C kl <span id="latestWeekReadingLowestTime2"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Medeltemperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestWeekReadingAverageTemp2">### Not connected ###</span> &deg;C</b></div>
+				</div>  	
+	
+				<br/>
+		
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div id="chartContainerWeek2" class="containers" style="height: 300px; width: 100%;"></div>
+					</div>
+				</div>  	
+
+
 			
 				<h2>Senaste m&aring;naden</h2>
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Högsta temperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingHighestTemp"></span> &deg;C kl <span id="latestMonthReadingHighestTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Högsta temperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingHighestTemp1"></span> &deg;C kl <span id="latestMonthReadingHighestTime1"></span></b></div>
 				</div>  	
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Lägsta temperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingLowestTemp"></span> &deg;C kl <span id="latestMonthReadingLowestTime"></span></b></div>
+					<div class="col-xs-6 col-md-4">Lägsta temperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingLowestTemp1"></span> &deg;C kl <span id="latestMonthReadingLowestTime1"></span></b></div>
 				</div>  	
 				<div class="row">
-					<div class="col-xs-6 col-md-4">Medeltemperatur:</div>
-					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingAverageTemp"></span> &deg;C</b></div>
+					<div class="col-xs-6 col-md-4">Medeltemperatur inne:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingAverageTemp1"></span> &deg;C</b></div>
 				</div>  	
 	
 				<br/>
 		
 				<div class="row">
 					<div class="col-xs-12 col-md-12">
-						<div id="chartContainerMonth" class="containers" style="height: 300px; width: 100%;"></div>
+						<div id="chartContainerMonth1" class="containers" style="height: 300px; width: 100%;"></div>
+					</div>
+				</div>
+				
+
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Högsta temperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingHighestTemp2">### Not connected ###</span> &deg;C kl <span id="latestMonthReadingHighestTime2"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Lägsta temperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingLowestTemp2">### Not connected ###</span> &deg;C kl <span id="latestMonthReadingLowestTime2"></span></b></div>
+				</div>  	
+				<div class="row">
+					<div class="col-xs-6 col-md-4">Medeltemperatur ute:</div>
+					<div class="col-xs-6 col-md-8"><b><span id="latestMonthReadingAverageTemp2">### Not connected ###</span> &deg;C</b></div>
+				</div>  	
+	
+				<br/>
+		
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div id="chartContainerMonth2" class="containers" style="height: 300px; width: 100%;"></div>
 					</div>
 				</div>  	
+				
+				  	
 			</div>
 		
 			<script>
@@ -192,10 +264,11 @@
 	
 	
 	/* Which application key are we using? */
-	var key = queryString.key;
-	if (key === undefined) {
-		key = "holmon";
+    var key1 = queryString.key;
+	if (key1 === undefined) {
+		key1 = "holmon";
 	}
+	var key2 = "holmon2";
 	var detailedDate = queryString.date;
 	if (detailedDate === undefined) {
 		detailedDate = toYYYYMMDD(new Date());
@@ -205,136 +278,196 @@
 	$("#alertBoxOnline").hide();
 	$("#alertBoxOffline").hide();
 	
+	var holmon2Data = null;
 	
-	$.get("/WeatherStationServer/api/temperature/" + key + "?date=" + detailedDate, function(data, status) {
+	$.get("/WeatherStationServer/api/temperature/" + key2 + "?date=" + detailedDate, function(data2, status2) {
+		holmon2Data = data2;
 		
-		function tempInfoConverterHHMM(info) { 
-			return { 
-				temp: info.temp, 
-				time: toHHMM(info.time)
-			}; 
-		}
-		
-		function tempInfoConverterYYMMDDHHMM(info) { 
-			return { 
-				temp: info.temp, 
-				time: toYYMMDDHHMM(info.time)
-			}; 
-		}
-		
-		function updateGUIWhenDataIsAvailable(temperatureInfo, key) {
-			var sensorActive = temperatureInfo.remoteSensorActive;
-			var currentTemp = temperatureInfo.currentTemp;
+		$.get("/WeatherStationServer/api/temperature/" + key1 + "?date=" + detailedDate, function(data, status) {
 			
-			var todaysLowestTemperature = temperatureInfo.todaysTemperature.lowestTemperature;
-			var todaysHighestTemperature = temperatureInfo.todaysTemperature.highestTemperature;
-			var todaysTemperatureInfo = _.map(temperatureInfo.todaysTemperature.temperatureInfo, tempInfoConverterHHMM);
-			var weeksTemperatureInfo = _.map(temperatureInfo.weeksTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
-			var monthsTemperatureInfo = _.map(temperatureInfo.monthsTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
-			
-			/* Switch from loading mode to display mode */
-			$("#dataNotLoadedArea").hide();
-			$("#dataLoadedArea").show();
-			
-			
-			
-			/* Update the alert boxes */
-			if (sensorActive) {
-				$("#alertBoxOnline").show("slow", function() {});
-				$("#upTime").html(millisToHumanTime(temperatureInfo.upOrDownTime));
-			} else {
-				$("#alertBoxOffline").show("slow", function() {});
-				$("#downTime").html(millisToHumanTime(temperatureInfo.upOrDownTime));
+			function tempInfoConverterHHMM(info) { 
+				return { 
+					temp: info.temp, 
+					time: toHHMM(info.time)
+				}; 
 			}
 			
-			/* Latest day updates */
-			$("#latestDayReadingCurrentTemp").html(temperatureInfo.currentTemp.temp);
-			$("#latestDayReadingCurrentTime").html(toYYMMDDHHMM(temperatureInfo.currentTemp.time));
-			$("#latestDayReadingHighestTemp").html(temperatureInfo.todaysTemperature.highestTemperature.temp);
-			$("#latestDayReadingHighestTime").html(toHHMM(temperatureInfo.todaysTemperature.highestTemperature.time));
-			$("#latestDayReadingLowestTemp").html(temperatureInfo.todaysTemperature.lowestTemperature.temp);
-			$("#latestDayReadingLowestTime").html(toHHMM(temperatureInfo.todaysTemperature.lowestTemperature.time));
-			$("#latestDayReadingAverageTemp").html(temperatureInfo.todaysTemperature.averageTemperature);
-			var detailedDay = toYYYYMMDD(temperatureInfo.todaysTemperature.periodToDate);
-			if (detailedDay === toYYYYMMDD(new Date())) {
-				$("#detailedDayCaption").html("Senaste dygnet");
-			} else {
-				$("#detailedDayCaption").html(getSwedishWeekdayName(temperatureInfo.todaysTemperature.periodToDate) + " " + toYYYYMMDDDashed(temperatureInfo.todaysTemperature.periodToDate));
+			function tempInfoConverterYYMMDDHHMM(info) { 
+				return { 
+					temp: info.temp, 
+					time: toYYMMDDHHMM(info.time)
+				}; 
 			}
+			
+			function updateGUIWhenDataIsAvailable(temperatureInfo, temperatureInfo2, key) {
+				var sensorActive = temperatureInfo.remoteSensorActive;
+				var currentTemp = temperatureInfo.currentTemp;
+				
+				var hasRegisteredOutsideTemp = temperatureInfo2.hasRegisteredData;
+				
+				var todaysTemperatureInfo = _.map(temperatureInfo.todaysTemperature.temperatureInfo, tempInfoConverterHHMM);
+				var weeksTemperatureInfo = _.map(temperatureInfo.weeksTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+				var monthsTemperatureInfo = _.map(temperatureInfo.monthsTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
 
-			$('#datepicker').datepicker({ 
-				dateFormat: "yymmdd",
-				onSelect: function(dateText) {
-					var selected = $("#datepicker").datepicker("getDate");
-					var formatted = toYYYYMMDD(selected.getTime());
-					reloadWithDifferentDate(formatted, key);
+				var todaysTemperatureInfo2 = _.map(temperatureInfo2.todaysTemperature.temperatureInfo, tempInfoConverterHHMM);
+				var weeksTemperatureInfo2 = _.map(temperatureInfo2.weeksTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+				var monthsTemperatureInfo2 = _.map(temperatureInfo2.monthsTemperature.temperatureInfo, tempInfoConverterYYMMDDHHMM);
+
+				
+				
+				/* Switch from loading mode to display mode */
+				$("#dataNotLoadedArea").hide();
+				$("#dataLoadedArea").show();
+				
+				
+				
+				/* Update the alert boxes */
+				if (sensorActive) {
+					$("#alertBoxOnline").show("slow", function() {});
+					$("#upTime").html(millisToHumanTime(temperatureInfo.upOrDownTime));
+				} else {
+					$("#alertBoxOffline").show("slow", function() {});
+					$("#downTime").html(millisToHumanTime(temperatureInfo.upOrDownTime));
 				}
-			});
-			
-			$('#datepicker').datepicker("setDate", new Date(temperatureInfo.todaysTemperature.periodToDate));
-			
-			$('#goBackBtn').on('click', function (e) {
-				var newDate = toYYYYMMDD(addDays(new Date(temperatureInfo.todaysTemperature.periodToDate), -1));
-				reloadWithDifferentDate(newDate, key);
-			})
-			$('#goForwardBtn').on('click', function (e) {
-				var newDate = toYYYYMMDD(addDays(new Date(temperatureInfo.todaysTemperature.periodToDate), 1));
-				reloadWithDifferentDate(newDate, key);
-			})
-			
-			/* Latest week*/
-			$("#latestWeekReadingHighestTemp").html(temperatureInfo.weeksTemperature.highestTemperature.temp);
-			$("#latestWeekReadingHighestTime").html(toYYMMDDHHMM(temperatureInfo.weeksTemperature.highestTemperature.time));
-			$("#latestWeekReadingLowestTemp").html(temperatureInfo.weeksTemperature.lowestTemperature.temp);
-			$("#latestWeekReadingLowestTime").html(toYYMMDDHHMM(temperatureInfo.weeksTemperature.lowestTemperature.time));
-			$("#latestWeekReadingAverageTemp").html(temperatureInfo.weeksTemperature.averageTemperature);
+				
+				/* Latest day updates */
+				$("#latestDayReadingCurrentTemp1").html(temperatureInfo.currentTemp.temp);
+				$("#latestDayReadingCurrentTime1").html(toYYMMDDHHMM(temperatureInfo.currentTemp.time));
+				$("#latestDayReadingHighestTemp1").html(temperatureInfo.todaysTemperature.highestTemperature.temp);
+				$("#latestDayReadingHighestTime1").html(toHHMM(temperatureInfo.todaysTemperature.highestTemperature.time));
+				$("#latestDayReadingLowestTemp1").html(temperatureInfo.todaysTemperature.lowestTemperature.temp);
+				$("#latestDayReadingLowestTime1").html(toHHMM(temperatureInfo.todaysTemperature.lowestTemperature.time));
+				$("#latestDayReadingAverageTemp1").html(temperatureInfo.todaysTemperature.averageTemperature);
 
-			/* Latest month*/
-			$("#latestMonthReadingHighestTemp").html(temperatureInfo.monthsTemperature.highestTemperature.temp);
-			$("#latestMonthReadingHighestTime").html(toYYMMDDHHMM(temperatureInfo.monthsTemperature.highestTemperature.time));
-			$("#latestMonthReadingLowestTemp").html(temperatureInfo.monthsTemperature.lowestTemperature.temp);
-			$("#latestMonthReadingLowestTime").html(toYYMMDDHHMM(temperatureInfo.monthsTemperature.lowestTemperature.time));
-			$("#latestMonthReadingAverageTemp").html(temperatureInfo.monthsTemperature.averageTemperature);
-			
-			
-			
-			chartTemperature({
-								chartContainer: "#chartContainerToday", 
-								dataSource: todaysTemperatureInfo,
-								curveExplanation: "Temp senaste dygnet (C)",
-								title: ""
-							});
-		
-			chartTemperature({
-								chartContainer: "#chartContainerWeek", 
-								dataSource: weeksTemperatureInfo,
-								curveExplanation: "Temp senaste veckan (C)",
-								title: ""
-							});
-		
-			chartTemperature({
-								chartContainer: "#chartContainerMonth", 
-								dataSource: monthsTemperatureInfo,
-								curveExplanation: "Temp senaste månaden (C)",
-								title: ""
-							});
-		}
-		
-		var hasRegisteredData = data.temperatureInfo.hasRegisteredData;
-
-		/* Do we have any temperature readings available on the server? */
-		
-		if (hasRegisteredData) {
-			updateGUIWhenDataIsAvailable(data.temperatureInfo, key);
-		} else {
-			/* Show the error message for sensro failures */
-			$("#dataNotLoadedArea").hide();
-			$("#dataLoadedArea").hide();
-			$("#dataNotAvailableArea").show();
-		}
-
+				if (hasRegisteredOutsideTemp) {
+					$("#latestDayReadingCurrentTemp2").html(temperatureInfo2.currentTemp.temp);
+					$("#latestDayReadingCurrentTime2").html(toYYMMDDHHMM(temperatureInfo2.currentTemp.time));
+					$("#latestDayReadingHighestTemp2").html(temperatureInfo2.todaysTemperature.highestTemperature.temp);
+					$("#latestDayReadingHighestTime2").html(toHHMM(temperatureInfo2.todaysTemperature.highestTemperature.time));
+					$("#latestDayReadingLowestTemp2").html(temperatureInfo2.todaysTemperature.lowestTemperature.temp);
+					$("#latestDayReadingLowestTime2").html(toHHMM(temperatureInfo2.todaysTemperature.lowestTemperature.time));
+					$("#latestDayReadingAverageTemp2").html(temperatureInfo2.todaysTemperature.averageTemperature);
+				}
+				
+				var detailedDay = toYYYYMMDD(temperatureInfo.todaysTemperature.periodToDate);
+				if (detailedDay === toYYYYMMDD(new Date())) {
+					$("#detailedDayCaption").html("Senaste dygnet");
+				} else {
+					$("#detailedDayCaption").html(getSwedishWeekdayName(temperatureInfo.todaysTemperature.periodToDate) + " " + toYYYYMMDDDashed(temperatureInfo.todaysTemperature.periodToDate));
+				}
 	
+				$('#datepicker').datepicker({ 
+					dateFormat: "yymmdd",
+					onSelect: function(dateText) {
+						var selected = $("#datepicker").datepicker("getDate");
+						var formatted = toYYYYMMDD(selected.getTime());
+						reloadWithDifferentDate(formatted, key);
+					}
+				});
+				
+				$('#datepicker').datepicker("setDate", new Date(temperatureInfo.todaysTemperature.periodToDate));
+				
+				$('#goBackBtn').on('click', function (e) {
+					var newDate = toYYYYMMDD(addDays(new Date(temperatureInfo.todaysTemperature.periodToDate), -1));
+					reloadWithDifferentDate(newDate, key);
+				})
+				$('#goForwardBtn').on('click', function (e) {
+					var newDate = toYYYYMMDD(addDays(new Date(temperatureInfo.todaysTemperature.periodToDate), 1));
+					reloadWithDifferentDate(newDate, key);
+				})
+				
+				/* Latest week*/
+				$("#latestWeekReadingHighestTemp1").html(temperatureInfo.weeksTemperature.highestTemperature.temp);
+				$("#latestWeekReadingHighestTime1").html(toYYMMDDHHMM(temperatureInfo.weeksTemperature.highestTemperature.time));
+				$("#latestWeekReadingLowestTemp1").html(temperatureInfo.weeksTemperature.lowestTemperature.temp);
+				$("#latestWeekReadingLowestTime1").html(toYYMMDDHHMM(temperatureInfo.weeksTemperature.lowestTemperature.time));
+				$("#latestWeekReadingAverageTemp1").html(temperatureInfo.weeksTemperature.averageTemperature);
+
+				if (hasRegisteredOutsideTemp) {
+					$("#latestWeekReadingHighestTemp2").html(temperatureInfo2.weeksTemperature.highestTemperature.temp);
+					$("#latestWeekReadingHighestTime2").html(toYYMMDDHHMM(temperatureInfo2.weeksTemperature.highestTemperature.time));
+					$("#latestWeekReadingLowestTemp2").html(temperatureInfo2.weeksTemperature.lowestTemperature.temp);
+					$("#latestWeekReadingLowestTime2").html(toYYMMDDHHMM(temperatureInfo2.weeksTemperature.lowestTemperature.time));
+					$("#latestWeekReadingAverageTemp2").html(temperatureInfo2.weeksTemperature.averageTemperature);
+				}
+				
+				/* Latest month*/
+				$("#latestMonthReadingHighestTemp1").html(temperatureInfo.monthsTemperature.highestTemperature.temp);
+				$("#latestMonthReadingHighestTime1").html(toYYMMDDHHMM(temperatureInfo.monthsTemperature.highestTemperature.time));
+				$("#latestMonthReadingLowestTemp1").html(temperatureInfo.monthsTemperature.lowestTemperature.temp);
+				$("#latestMonthReadingLowestTime1").html(toYYMMDDHHMM(temperatureInfo.monthsTemperature.lowestTemperature.time));
+				$("#latestMonthReadingAverageTemp1").html(temperatureInfo.monthsTemperature.averageTemperature);
+
+				if (hasRegisteredOutsideTemp) {
+					$("#latestMonthReadingHighestTemp2").html(temperatureInfo2.monthsTemperature.highestTemperature.temp);
+					$("#latestMonthReadingHighestTime2").html(toYYMMDDHHMM(temperatureInfo2.monthsTemperature.highestTemperature.time));
+					$("#latestMonthReadingLowestTemp2").html(temperatureInfo2.monthsTemperature.lowestTemperature.temp);
+					$("#latestMonthReadingLowestTime2").html(toYYMMDDHHMM(temperatureInfo2.monthsTemperature.lowestTemperature.time));
+					$("#latestMonthReadingAverageTemp2").html(temperatureInfo2.monthsTemperature.averageTemperature);
+				}
+				
+				
+				chartTemperature({
+									chartContainer: "#chartContainerToday1", 
+									dataSource: todaysTemperatureInfo,
+									curveExplanation: "Temp senaste dygnet inomhus (C)",
+									title: ""
+								});
+			
+				chartTemperature({
+									chartContainer: "#chartContainerWeek1", 
+									dataSource: weeksTemperatureInfo,
+									curveExplanation: "Temp senaste veckan inomhus (C)",
+									title: ""
+								});
+			
+				chartTemperature({
+									chartContainer: "#chartContainerMonth1", 
+									dataSource: monthsTemperatureInfo,
+									curveExplanation: "Temp senaste månaden inomhus (C)",
+									title: ""
+								});
+				
+				chartTemperature({
+					chartContainer: "#chartContainerToday2", 
+					dataSource: todaysTemperatureInfo2,
+					curveExplanation: "Temp senaste dygnet utomhus (C)",
+					title: ""
+				});
+
+				chartTemperature({
+					chartContainer: "#chartContainerWeek2", 
+					dataSource: weeksTemperatureInfo2,
+					curveExplanation: "Temp senaste veckan utomhus (C)",
+					title: ""
+				});
+
+				chartTemperature({
+					chartContainer: "#chartContainerMonth2", 
+					dataSource: monthsTemperatureInfo2,
+					curveExplanation: "Temp senaste månaden utomhus (C)",
+					title: ""
+				});
+				
+			}
+			
+			var hasRegisteredData = data.temperatureInfo.hasRegisteredData;
+	
+			/* Do we have any temperature readings available on the server? */
+			
+			if (hasRegisteredData) {
+				updateGUIWhenDataIsAvailable(data.temperatureInfo, holmon2Data.temperatureInfo, key1);
+			} else {
+				/* Show the error message for sensor failures */
+				$("#dataNotLoadedArea").hide();
+				$("#dataLoadedArea").hide();
+				$("#dataNotAvailableArea").show();
+			}
+	
+		
+		});
 	});
+	
 	
 		
 		</script>

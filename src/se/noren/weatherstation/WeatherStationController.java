@@ -20,6 +20,7 @@ import se.noren.weatherstation.util.DateConverter;
 @Controller
 @RequestMapping("/temperature")
 public class WeatherStationController {
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
